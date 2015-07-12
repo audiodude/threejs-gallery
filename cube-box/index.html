@@ -25,7 +25,10 @@
 	</style>
 </head>
 <body>
-  <audio id="player" src="audio/cube_box.mp3" autoplay loop></audio>
+  <audio id="player" autoplay loop>
+    <source src="audio/cube_box.mp3" type="audio/mp3">
+    <source src="audio/cube_box.ogg" type="audio/ogg">
+  </audio>
   <div id="speaker" class="playing"></div>
 	<script src="/js/three.min.js"></script>
   <script src="js/main.js"></script>
