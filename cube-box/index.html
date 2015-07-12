@@ -5,10 +5,28 @@
 	<style>
 		body { margin: 0; }
 		canvas { width: 100%; height: 100% }
+    #speaker {
+      background-size: cover;
+      bottom: 20px;
+      cursor: pointer;
+      height: 50px;
+      position: absolute;
+      right: 20px;
+      width: 63px;
+    }
+
+    #speaker.playing {
+      background-image: url("/img/speaker.png");
+    }
+
+    #speaker.mute {
+      background-image: url("/img/speaker_mute.png");
+    }
 	</style>
 </head>
 <body>
-  <audio src="audio/cube_box.mp3" autoplay loop/>
+  <audio id="player" src="audio/cube_box.mp3" autoplay loop></audio>
+  <div id="speaker" class="playing"></div>
 	<script src="/js/three.min.js"></script>
   <script src="js/main.js"></script>
 </body>
