@@ -8,26 +8,9 @@
   <meta property="og:image" content="/img/cube_box.png"/>
 
 	<title>Cube Box - Travis Briggs</title>
+  <link rel="stylesheet" href="/css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/style.css">
 	<style>
-		body { margin: 0; }
-		canvas { width: 100%; height: 100% }
-    #speaker {
-      background-size: cover;
-      bottom: 20px;
-      cursor: pointer;
-      height: 50px;
-      position: absolute;
-      right: 20px;
-      width: 63px;
-    }
-
-    #speaker.playing {
-      background-image: url("/img/speaker.png");
-    }
-
-    #speaker.mute {
-      background-image: url("/img/speaker_mute.png");
-    }
 	</style>
 </head>
 <body>
@@ -35,7 +18,18 @@
     <source src="audio/cube_box.mp3" type="audio/mp3">
     <source src="audio/cube_box.ogg" type="audio/ogg">
   </audio>
-  <div id="speaker" class="playing"></div>
+  <div id="info" class="hid">
+    Cube Box is a 3D animation/art project created by
+    <a href="http://travisbriggs.com">Travis Briggs</a> using the
+    <a href="http://threejs.org/">three.js</a> framework. The music on this
+    page, also called Cube Box, was also created by Travis. The source code for
+    this project is available under the MIT license and can be found at
+    <a href="https://github.com/audiodude/threejs-gallery">Github</a>.
+  </div>
+  <div id="icons">
+    <i id="info-icon" class="fa fa-info-circle fa-2x"></i>
+    <div id="speaker" class="playing"></div>
+  </div>
 	<script src="/js/three.min.js"></script>
   <script src="js/main.js"></script>
 </body>

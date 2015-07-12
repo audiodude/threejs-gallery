@@ -1,3 +1,4 @@
+// Mute the audio and toggle the speaker icon when it is clicked.
 var player = document.getElementById('player');
 var speaker = document.getElementById('speaker');
 speaker.addEventListener('click', function() {
@@ -13,7 +14,16 @@ speaker.addEventListener('click', function() {
 });
 
 
+// Show/hide the info box when the icon is clicked.
+var info_icon = document.getElementById('info-icon');
+var toggleInfo = function() {
+  var info = document.getElementById('info');
+  info.classList.toggle('hid');
+}
+info_icon.addEventListener('click', toggleInfo);
 
+
+// Now let's make some 3D.
 var scene = new THREE.Scene();
 var camera = new THREE.PerspectiveCamera(
   75, window.innerWidth / window.innerHeight, 0.1, 1000);
