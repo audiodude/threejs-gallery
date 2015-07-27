@@ -37,21 +37,22 @@ function make3D() {
   var DEAD = new THREE.Color(0xFFFFFF);
   var LIVE = new THREE.Color(0xFF0000);
 
-  var BASE = 35;
+  var BASE = 12;
   var SPACING = 1;
+  var TOTAL_SPACE = BASE * SPACING
+  var CAMERA_SPACE = TOTAL_SPACE;
 
-  camera.position.copy(new THREE.Vector3(0, 0, 25));
+  camera.position.copy(new THREE.Vector3(0, 0, CAMERA_SPACE));
   camera.lookAt(ORIGIN);
 
   var geometry = new THREE.BoxGeometry(.5, .5, .5, 3, 3, 3);
 
-  var Layer = function() {
+  var Layer = function(z) {
     this.p = 0;
     this.q = 1;
     this.grids = [[]];
     this.cubes = [];
 
-    var total_space = BASE * SPACING;
     for (var i = 0; i < BASE; i++) {
       var col = [];
       this.grids[0].push(col);
@@ -59,12 +60,13 @@ function make3D() {
         col.push(Math.random() > 0.2);
         var material = new THREE.MeshBasicMaterial({
           color: DEAD,
+          opacity: 0.8,
           wireframe: true
         });
         var cube = new THREE.Mesh(geometry, material);
-        cube.position.x = -1 * total_space/2 + i * SPACING;
-        cube.position.y = -1 * total_space/2 + j * SPACING;
-        cube.position.z = 0;
+        cube.position.x = -1 * TOTAL_SPACE/2 + i * SPACING;
+        cube.position.y = -1 * TOTAL_SPACE/2 + j * SPACING;
+        cube.position.z = z;
         scene.add(cube);
         this.cubes.push(cube);
       }
@@ -144,8 +146,12 @@ function make3D() {
     }
   }
 
-  var layer = new Layer();
-
+  var layers = [];
+  for (var i=0; i<BASE; i++) {
+    var z = -1 * TOTAL_SPACE/2 + i * SPACING;
+    layers.push(new Layer(z))
+  }
+  
   var frame = 0;
   var canvas = document.getElementsByTagName('CANVAS')[0];
   var captureFrame = function() {
@@ -170,11 +176,13 @@ function make3D() {
       requestAnimationFrame( render );
     }, 1000 / FPS);
 
-    layer.draw();
+    for (var i=0; i<layers.length; i++) {
+      layers[i].draw();
+    }
 
     // Rotate the camera
-    camera.position['x'] = 25 * Math.sin(t);
-    camera.position['z'] = 25 * Math.cos(t);
+    camera.position['x'] = CAMERA_SPACE * Math.sin(t);
+    camera.position['z'] = CAMERA_SPACE * Math.cos(t);
     camera.lookAt(ORIGIN);
 
     t += 0.01;
@@ -184,11 +192,15 @@ function make3D() {
 
     count++;
     if (count % (FPS/5) == 0) {
-      layer.calcGrid();
+      for (var i=0; i<layers.length; i++) {
+        layers[i].calcGrid();
+      }
     }
     if (count == FPS * 10) {
       count = 0;
-      layer.addRandom();
+      for (var i=0; i<layers.length; i++) {
+        layers[i].addRandom();
+      }
     }
 
     renderer.render(scene, camera);
