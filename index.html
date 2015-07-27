@@ -4,7 +4,7 @@
   <style>
     body {
       color: #fff;
-      background-color: #000;
+      background-color: #aaa;
 
       display: flex;
       flex-flow: row wrap;
@@ -12,17 +12,26 @@
     }
 
     .item {
+      border: 1px solid #fff;
+      box-sizing: border-box;
       flex-grow: 1;
       margin: 20px;
+      max-width: 20%;
+      padding: 10px;
+      text-align: center;
+    }
+
+    .item h3 {
+      margin-top: 0;
     }
 
     a, a:hover, a:active {
-      color: #aaa;
+      color: #666;
       text-decoration: none;
     }
 
     a:visited {
-      color: #ccc;
+      color: #333;
     }
     a:hover {
       text-decoration: underline;
@@ -44,6 +53,10 @@
   <div class="item">
     <h3><a href="cube-box">Cube Box</a></h3>
     <span class="date">July 11, 2015</span>
+  </div>
+  <div class="item">
+    <h3><a href="ca-layers">CA Layers</a></h3>
+    <span class="date">July 26, 2015</span>
   </div>
 </body>
 </html>
