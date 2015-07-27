@@ -37,39 +37,114 @@ function make3D() {
   var DEAD = new THREE.Color(0xFFFFFF);
   var LIVE = new THREE.Color(0xFF0000);
 
+  var BASE = 35;
+  var SPACING = 1;
 
   camera.position.copy(new THREE.Vector3(0, 0, 25));
   camera.lookAt(ORIGIN);
 
   var geometry = new THREE.BoxGeometry(.5, .5, .5, 3, 3, 3);
 
+  var Layer = function() {
+    this.p = 0;
+    this.q = 1;
+    this.grids = [[]];
+    this.cubes = [];
 
-  var p = 0;
-  var q = 1;
-  var grids = [[]];
-  var cubes = [];
-  var base = 35;
-  var spacing = 1;
-  var total_space = base * spacing;
-  for (var i = 0; i < base; i++) {
-    var col = [];
-    grids[0].push(col);
-    for (var j = 0; j < base; j++) {
-      col.push(Math.random() > 0.2);
+    var total_space = BASE * SPACING;
+    for (var i = 0; i < BASE; i++) {
+      var col = [];
+      this.grids[0].push(col);
+      for (var j = 0; j < BASE; j++) {
+        col.push(Math.random() > 0.2);
+        var material = new THREE.MeshBasicMaterial({
+          color: DEAD,
+          wireframe: true
+        });
+        var cube = new THREE.Mesh(geometry, material);
+        cube.position.x = -1 * total_space/2 + i * SPACING;
+        cube.position.y = -1 * total_space/2 + j * SPACING;
+        cube.position.z = 0;
+        scene.add(cube);
+        this.cubes.push(cube);
+      }
+    }
+    this.grids[this.p+1] = this.grids[this.p].slice(0);
+  }
 
-      var material = new THREE.MeshBasicMaterial({
-        color: DEAD,
-        wireframe: true
-      });
-      var cube = new THREE.Mesh(geometry, material);
-      cube.position.x = -1 * total_space/2 + i * spacing;
-      cube.position.y = -1 * total_space/2 + j * spacing;
-      cube.position.z = 0;
-      scene.add(cube);
-      cubes.push(cube);
+  Layer.prototype.getNeighbors = function(i, j) {
+    ans = []
+    for (var x=-1; x <= 1; x++) {
+      for (var y=-1; y <= 1; y++) {
+        if (x == 0 && y == 0) {
+          break;
+        }
+        var n = i + x;
+        if (n < 0) { n = BASE - 1; }
+        if (n > BASE - 1) { n = 0; }
+        var m = j + y;
+        if (m < 0) { m = BASE - 1; }
+        if (m > BASE - 1) { m = 0; }
+        ans.push(this.grids[this.p][n][m]);
+      }
+    }
+    return ans;
+  }
+
+  Layer.prototype.numAlive = function(bors) {
+    var num = 0;
+    for (var i=0; i<bors.length; i++) {
+      if (bors[i]) {
+        num++;
+      }
+    }
+    return num;
+  }
+
+  Layer.prototype.calcGrid = function() {
+    for (var i=0; i<BASE; i++) {
+      for (var j=0; j<BASE; j++) {
+        var bors = this.getNeighbors(i, j);
+        var num = this.numAlive(bors);
+        this.grids[this.q][i][j] = ((this.grids[this.p][i][j] && num == 2) ||
+                                    num == 3);
+      }
+    }
+    if (this.p == 0) {
+      this.p = 1; this.q = 0;
+    } else {
+      this.p = 0; this.q = 1;
     }
   }
-  grids[p+1] = grids[p].slice(0);
+
+  Layer.prototype.addRandom = function() {
+    for (var i=0; i < BASE * BASE / 2; i++) {
+      var x = Math.ceil(Math.random() * (BASE - 1));
+      var y = Math.ceil(Math.random() * (BASE - 1));
+      this.grids[this.p][x][y] = true;
+    }
+  }
+
+  Layer.prototype.draw = function() {
+     for (var i=0; i<this.cubes.length; i++) {
+      var cube = this.cubes[i];
+      cube.rotation.x += cube.position.x / 100;
+      cube.rotation.y += cube.position.y / 100;
+      cube.rotation.z += cube.position.z / 100;
+    }
+
+    for (var i=0; i<BASE; i++) {
+      for (var j=0; j<BASE; j++) {
+        if (this.grids[this.p][i][j]) {
+          this.cubes[i*BASE + j].material.color = LIVE;
+        } else {
+          this.cubes[i*BASE + j].material.color = DEAD;
+        }
+      }
+    }
+  }
+
+  var layer = new Layer();
 
   var frame = 0;
   var canvas = document.getElementsByTagName('CANVAS')[0];
@@ -88,60 +163,6 @@ function make3D() {
     });
   }
 
-  function getNeighbors(i, j) {
-    ans = []
-    for (var x=-1; x <= 1; x++) {
-      for (var y=-1; y <= 1; y++) {
-        if (x == 0 && y == 0) {
-          break;
-        }
-        var n = i + x;
-        if (n < 0) { n = base - 1; }
-        if (n > base - 1) { n = 0; }
-        var m = j + y;
-        if (m < 0) { m = base - 1; }
-        if (m > base - 1) { m = 0; }
-        ans.push(grids[p][n][m]);
-      }
-    }
-    return ans;
-  }
-
-  function numAlive(bors) {
-    var num = 0;
-    for (var i=0; i<bors.length; i++) {
-      if (bors[i]) {
-        num++;
-      }
-    }
-    return num;
-  }
-
-  function calcGrid() {
-    for (var i=0; i<base; i++) {
-      for (var j=0; j<base; j++) {
-        var bors = getNeighbors(i, j);
-        var num = numAlive(bors);
-        grids[q][i][j] = (grids[p][i][j] && num == 2) || num == 3;
-      }
-    }
-    if (p == 0) {
-      p = 1;
-      q = 0;
-    } else {
-      p = 0;
-      q = 1;
-    }
-  }
-
-  function addRandom() {
-    for (var i=0; i < base * base / 2; i++) {
-      var x = Math.ceil(Math.random() * (base - 1));
-      var y = Math.ceil(Math.random() * (base - 1));
-      grids[p][x][y] = true;
-    }
-  }
-
   var t = 0;
   var count = 0;
   function render() {
@@ -149,22 +170,7 @@ function make3D() {
       requestAnimationFrame( render );
     }, 1000 / FPS);
 
-    for (var i=0; i<base; i++) {
-      for (var j=0; j<base; j++) {
-        if (grids[p][i][j]) {
-          cubes[i*base + j].material.color = LIVE;
-        } else {
-          cubes[i*base + j].material.color = DEAD;
-        }
-      }
-    }
-
-    for (var i=0; i<cubes.length; i++) {
-      var cube = cubes[i];
-      cube.rotation.x += cube.position.x / 100;
-      cube.rotation.y += cube.position.y / 100;
-      cube.rotation.z += cube.position.z / 100;
-    }
+    layer.draw();
 
     // Rotate the camera
     camera.position['x'] = 25 * Math.sin(t);
@@ -178,11 +184,11 @@ function make3D() {
 
     count++;
     if (count % (FPS/5) == 0) {
-      calcGrid();
+      layer.calcGrid();
     }
     if (count == FPS * 10) {
       count = 0;
-      addRandom();
+      layer.addRandom();
     }
 
     renderer.render(scene, camera);
