@@ -1,0 +1,68 @@
+body {
+  margin: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+a, a:active {
+  color: #888;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #888;
+  text-decoration: underline;
+}
+
+a:visited {
+  color: #444;
+}
+
+canvas {
+  height: 100%;
+  width: 100%;
+}
+
+.hid {
+  display: none;
+}
+
+#info {
+  background-color: #ffffff;
+  bottom: 90px;
+  opacity: 0.6;
+  padding: 4px;
+  position: absolute;
+  right: 20px;
+  width: 325px;
+}
+
+#info-icon {
+  cursor: pointer;
+}
+
+#icons {
+  align-items: center;
+  bottom: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  position: absolute;
+  right: 20px;
+  width: 100px;
+}
+
+#speaker {
+  background-size: cover;
+  cursor: pointer;
+  height: 50px;
+  width: 63px;
+}
+
+#speaker.playing {
+  background-image: url("/img/speaker.png");
+}
+
+#speaker.mute {
+  background-image: url("/img/speaker_mute.png");
+}
