@@ -47,7 +47,7 @@ var Cube = function(color) {
   this.color = color;
   this.rate = -0.1 * Math.random() - 0.4;
   this.delta = 1 + Math.random() * 0.05;
-  this.delay = Math.random() * 20;
+  this.delay = Math.random() * 40;
   var geometry = new THREE.BoxGeometry(10, 10, 10, 3, 3, 3);
   var material = new THREE.MeshBasicMaterial({
     color: this.color,
@@ -120,7 +120,7 @@ Particle.prototype.animate = function(frame) {
 
 
 var cubes = [];
-var base = 5;
+var base = 6;
 var spacing = 24;
 var total_space = base * spacing;
 for(var i=0; i<base; i++) {
