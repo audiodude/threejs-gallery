@@ -22,8 +22,8 @@ var toggleInfo = function() {
 info_icon.addEventListener('click', toggleInfo);
 
 function make3D() {
-  var FPS = 60;
-  var secs_to_capture = 64;
+  var FPS = 30;
+  var secs_to_capture = 3;
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(
     75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -84,7 +84,7 @@ function make3D() {
   var canvas = document.getElementsByTagName('CANVAS')[0];
   var captureFrame = function() {
     var img = canvas.toDataURL('image/png');
-    $.ajax('http://localhost:5000', {
+    $.ajax('/capture', {
       method: 'POST',
       data: {
         'frame': frame,

@@ -1,0 +1,22 @@
+{
+  "name": "digital-gallery-server",
+  "version": "0.1.0",
+  "description": "Serves files for a digital art gallery and allows for captures of screenshots of the art",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/audiodude/threejs-gallery.git"
+  },
+  "author": "Travis Briggs <audiodude@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/audiodude/threejs-gallery/issues"
+  },
+  "homepage": "https://github.com/audiodude/threejs-gallery#readme",
+  "dependencies": {
+    "express": "^4.13.3"
+  }
+}
