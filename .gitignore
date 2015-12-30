@@ -1,5 +1,5 @@
 .DS_Store
 .bundle
-_server/out
+_server/out/*.png
 _server/node_modules
 _site

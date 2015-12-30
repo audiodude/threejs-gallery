@@ -3,6 +3,11 @@ var app = express();
 var qs = require('querystring');
 var fs = require('fs');
 
+// From http://stackoverflow.com/questions/10073699/pad-a-number-with-leading-zeros-in-javascript
+function padDigits(number, digits) {
+    return Array(Math.max(digits - String(number).length + 1, 0)).join(0) + number;
+}
+
 app.use(express.static('../_site'));
 
 app.post('/capture', function(req, resp) {
@@ -16,9 +21,10 @@ app.post('/capture', function(req, resp) {
     var data = post['data'].split(';base64,')[1];
     var buf = new Buffer(data, 'base64');
 
-    var file_name = 'out/frame_' + post['frame'] + '.png';
+    var file_name = 'out/frame_' + padDigits(post['frame'], 5) + '.png';
     fs.writeFile(file_name, buf, function(err) {
       if (err) {
+        console.error('Error writing %s: %s', file_name, err);
         resp.writeHead(500, 'Internal Error');
         resp.end();
         return;
