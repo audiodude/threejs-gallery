@@ -1,0 +1,139 @@
+---
+title: City
+---
+  <script type="application/processing">
+    int unit = 30;
+
+    class Slab {
+      color c = color(255);
+      color c2 = color(random(255), random(green(255)), blue(c) - 1);
+      float amt;
+      float x, y;
+      float subwidth, subheight;
+
+      public Slab(float x, float y, float width, float height) {
+        this.x = x;
+        this.y = y;
+        this.subwidth = width/15;
+        this.subheight = height/15;
+      }
+
+      void display() {
+        fill(c);
+        noStroke();
+        rect(x,y,subwidth,subheight);
+      }
+
+      void evolve() {
+        c = lerpColor(c, c2, amt);
+        amt += 0.1;
+        if (amt >= 1.0) {
+          amt = 0;
+          c = c2;
+          c2 = color(random(255), random(green(255)), blue(c) - 1);
+        }
+      }
+    }
+
+    class Spot {
+      float x, y;
+      boolean orientation;
+      boolean direction;
+
+      float DELTA = 3;
+
+      public Spot(float x, float y, boolean orientation) {
+        this.x = x;
+        this.y = y;
+        this.orientation = orientation;
+        direction = (random(1) > 0.5);
+      }
+
+      void display() {
+        fill(0);
+        noStroke();
+        rect(x, y, 4, 4);
+      }
+
+      void evolve() {
+        if(direction) {
+          if(orientation) {
+            x += DELTA;
+          } else {
+            y += DELTA;
+          } 
+        } else {
+          if(orientation) {
+            x -= DELTA;
+          } else {
+            y -= DELTA;
+          }
+        }
+
+        if(x >= width || x <= 0 || y >= height || y <= 0) {
+          direction = !direction;
+        }
+      }
+    }
+
+    class Grid {
+      float subwidth, subheight;
+      color c = color(255);
+
+      public Grid(float width, float height) {
+        subwidth = width/30;
+        subheight = height/15;
+      }
+
+      void display() {
+        for(float x=subwidth/2; x<width; x+=subwidth) {
+          stroke(c);
+          line(x,0,x,height);
+        }
+
+        for(float y=subheight/2; y<height; y+=subheight) {
+          stroke(c);
+          line(0,y,width,y);
+        }
+      }
+    }
+
+    ArrayList<Slab> slabs = new ArrayList<Slab>();
+    ArrayList<Spot> spots = new ArrayList<Spot>();
+    Grid grid;
+    void setup() {
+      frameRate(30);
+      strokeWeight(4);
+      size(unit*40, unit*22.5);
+      grid = new Grid(width, height);
+
+      for(float x=0-width/30; x<width; x+=width/30) {
+        for(float y=0-height/15; y<height; y+=height/15) {
+          slabs.add(new Slab(x, y, width, height));
+        }
+      }
+
+      for(float x=width/60; x<width; x+=width/15) {
+        spots.add(new Spot(x-2, random(height), false));
+      }
+
+      for(float y=height/30; y<height; y+=height/15) {
+        spots.add(new Spot(random(width), y-2, true));
+      }
+    }
+
+
+    void draw() {
+      for(Slab slab : slabs) {
+        slab.display();
+        slab.evolve();
+      }
+
+      grid.display();
+
+      for(Spot spot : spots) {
+        spot.display();
+        spot.evolve();
+      }
+    }
+  </script>

@@ -1,0 +1,21 @@
+body {
+  overflow: hidden;
+  position: relative;
+}
+
+html, body, #container {
+  background-color: #aaa;
+  height: 100%;
+  margin: 0;
+}
+
+#container {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+canvas {
+  flex: 0 1 auto;
+}

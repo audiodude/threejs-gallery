@@ -3,3 +3,14 @@ safe: true
 lsi: false
 exclude: ['Gemfile', 'Gemfile.lock', 'README.md', 'CNAME']
 destination: _site
+
+collections:
+  2d:
+    output: true
+
+defaults:
+  - scope:
+      path: ""
+      type: 2d
+    values:
+      layout: 2d
