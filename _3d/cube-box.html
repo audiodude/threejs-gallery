@@ -1,26 +1,8 @@
-// Mute the audio and toggle the speaker icon when it is clicked.
-var player = document.getElementById('player');
-var speaker = document.getElementById('speaker');
-speaker.addEventListener('click', function() {
-  if (speaker.classList.contains('playing')) {
-    player.muted = true;
-    speaker.classList.remove('playing');
-    speaker.classList.add('mute');
-  } else {
-    player.muted = false;
-    speaker.classList.remove('mute');
-    speaker.classList.add('playing');
-  }
-});
-
-// Show/hide the info box when the icon is clicked.
-var info_icon = document.getElementById('info-icon');
-var toggleInfo = function() {
-  var info = document.getElementById('info');
-  info.classList.toggle('hid');
-}
-info_icon.addEventListener('click', toggleInfo);
-
+---
+title: Cube Box
+music: /audio/cube-box
+---
+<script type="text/javascript">
 function make3D() {
   var FPS = 30;
   var secs_to_capture = 3;
@@ -89,7 +71,7 @@ function make3D() {
       data: {
         'frame': frame,
         'data': img
-        },
+      },
       error: function() {
         // If the server is unavailable, stop the capture process.
         CAPTURE = false;
@@ -145,3 +127,4 @@ if (CAPTURE) {
 } else {
   make3D();
 }
+</script>

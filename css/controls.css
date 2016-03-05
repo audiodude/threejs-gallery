@@ -1,21 +1,3 @@
-a, a:active {
-  color: #888;
-  text-decoration: none;
-}
-
-a:hover {
-  color: #888;
-  text-decoration: underline;
-}
-
-a:visited {
-  color: #444;
-}
-
-.hid {
-  display: none;
-}
-
 #info {
   background-color: #ffffff;
   bottom: 90px;

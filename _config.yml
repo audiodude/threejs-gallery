@@ -7,6 +7,8 @@ destination: _site
 collections:
   2d:
     output: true
+  3d:
+    output: true
 
 defaults:
   - scope:
@@ -14,3 +16,8 @@ defaults:
       type: 2d
     values:
       layout: 2d
+  - scope:
+      path: ""
+      type: 3d
+    values:
+      layout: 3d
