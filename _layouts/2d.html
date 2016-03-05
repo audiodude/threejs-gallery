@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta property="og:site_name" content="Digital artwork gallery"/>
+  <meta property="og:title" content="{{page.title}} by Travis Briggs"/>
+  <meta property="og:description" content="A 2D browser animation made by Travis Briggs{% if page.music %} featuring original music also composed by him{% endif %}. The animation uses HTML5 Canvas and the Processing.js javascript framework."/>
+  <meta property="og:type" content="website"/>
+  {% if page.image %}
+    <meta property="og:image" content="{{page.image}}.png"/>
+  {% endif %}
+
   <title>'{{page.title}}' - Travis Briggs</title>
   <link rel="stylesheet" href="/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="/css/base.css">
   <link rel="stylesheet" type="text/css" href="/css/controls.css">
   <link rel="stylesheet" type="text/css" href="/css/2d.css">
+  {% include analytics.html %}
 </head>
 <body>
   <div id="container">

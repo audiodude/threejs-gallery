@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta property="og:site_name" content="Threejs gallery"/>
-  <meta property="og:title" content="Cube Box by Travis Briggs"/>
-  <meta property="og:description" content="A 3D browser animation made by Travis Briggs featuring original music also composed by him. The animation uses WebGL and the Threejs javascript framework."/>
+  <meta property="og:site_name" content="Digital artwork gallery"/>
+  <meta property="og:title" content="{{page.title}} by Travis Briggs"/>
+  <meta property="og:description" content="A 3D browser animation made by Travis Briggs{% if page.music %} featuring original music also composed by him{% endif %}. The animation uses WebGL and the Threejs javascript framework."/>
   <meta property="og:type" content="website"/>
   {% if page.image %}
-    <meta property="og:image" content="/img/cube_box.png"/>
+    <meta property="og:image" content="{{page.image}}.png"/>
   {% endif %}
 
 	<title>{{page.title}} - Travis Briggs</title>
@@ -24,7 +24,7 @@
     </audio>
   {% endif %}
   <div id="info" class="hid">
-    Cube Box is a 3D animation/art project created by
+    {{page.title}} is a 3D animation/art project created by
     <a href="http://travisbriggs.com">Travis Briggs</a> using the
     <a href="http://threejs.org/">three.js</a> framework.
 
