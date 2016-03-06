@@ -1,66 +1,42 @@
+---
+---
 <!DOCTYPE html>
 <html>
 <head>
-  <style>
-    body {
-      color: #fff;
-      background-color: #aaa;
+  <meta property="og:site_name" content="Digital artwork gallery"/>
+  <meta property="og:title" content="{{page.title}} by Travis Briggs"/>
+  <meta property="og:description" content="A gallery of 2D and 3D browser animations and artwork made by Travis Briggs, some of which feature original music also composed by him. Uses HTML5 features and various JS frameworks."/>
+  <meta property="og:type" content="website"/>
+  <meta property="og:image" content="/img/cube-box.png"/>
 
-      display: flex;
-      flex-flow: row wrap;
-      justify-content: space-around;
-    }
-
-    .item {
-      border: 1px solid #fff;
-      box-sizing: border-box;
-      flex-grow: 1;
-      margin: 20px;
-      max-width: 20%;
-      padding: 10px;
-      text-align: center;
-    }
-
-    .item h3 {
-      margin-top: 0;
-    }
-
-    a, a:hover, a:active {
-      color: #666;
-      text-decoration: none;
-    }
-
-    a:visited {
-      color: #333;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-  </style>
-  <title>three.js creations - Travis Briggs</title>
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-8311622-22', 'auto');
-    ga('send', 'pageview');
-
-  </script>
+  <title>Digital artwork gallery - Travis Briggs</title>
+  <link rel="stylesheet" type="text/css" href="/css/index.css">
+  {% include analytics.html %}
 </head>
 <body>
-  <div class="item">
-    <h3><a href="cube-box">Cube Box</a></h3>
-    <span class="date">July 11, 2015</span>
-  </div>
-  <div class="item">
-    <h3><a href="ca-layers">CA Layers</a></h3>
-    <span class="date">July 26, 2015</span>
-  </div>
-  <div class="item">
-    <h3><a href="drip">Drip</a></h3>
-    <span class="date">August 3, 2015</span>
-  </div>
+  <h1>2D and 3D artwork by Travis Briggs</h1>
+  <h2>3D</h2>
+  <section class="container">
+    {% for three_d in site.3d | sort: 'date' %}
+      <div class="item">
+        <h3><a href="{{three_d.relative_path}}">{{three_d.title}}</a></h3>
+        {% if three_d.show_date %}
+          <span class="date">{{three_d.date | date: '%B %d, %Y'}}</span>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </section>
+
+  <h2>2D</h2>
+  <section class="container">
+    {% for two_d in site.2d | sort: 'date' %}
+      <div class="item">
+        <h3><a href="{{two_d.relative_path}}">{{two_d.title}}</a></h3>
+        {% if two_d.show_date %}
+          <span class="date">{{two_d.date | date: '%B %d, %Y'}}</span>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </section>
 </body>
 </html>

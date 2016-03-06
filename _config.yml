@@ -16,8 +16,10 @@ defaults:
       type: 2d
     values:
       layout: 2d
+      show_date: false
   - scope:
       path: ""
       type: 3d
     values:
       layout: 3d
+      show_date: true
