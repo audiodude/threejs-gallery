@@ -1,5 +1,5 @@
 var secs_to_capture = 3;
-var make_animation = null;
+var makeAnimation = null;
 
 var captureFrame = null;
 var CAPTURE = window.location.href.indexOf('capture') != -1;
@@ -11,10 +11,13 @@ if (CAPTURE) {
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
   player.pause();
   // Wait 3 seconds for jquery to load. Lame.
-  window.setTimeout(make_animation, 3000);
+  window.setTimeout(function() {
+    makeAnimation();
+  }, 3000);
 
-  var canvas = document.getElementsByTagName('CANVAS')[0];
+  var canvas = null;
   captureFrame = function(frame, fps_ratio) {
+    canvas = canvas || document.getElementsByTagName('CANVAS')[0];
     var img = canvas.toDataURL('image/png');
     $.ajax('/capture', {
       method: 'POST',
@@ -27,4 +30,5 @@ if (CAPTURE) {
         catpureFrame = null;
       }
     });
+  }
 }
