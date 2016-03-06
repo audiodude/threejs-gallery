@@ -5,9 +5,8 @@ music: /audio/cube-box
 image: /img/cube-box
 ---
 <script type="text/javascript">
-function make3D() {
+function makeAnimation() {
   var FPS = 60;
-  var secs_to_capture = 3;
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(
     75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -63,24 +62,8 @@ function make3D() {
     cubes.push(cube);
   }
 
-
   var frame = 0;
-  var canvas = document.getElementsByTagName('CANVAS')[0];
-  var captureFrame = function() {
-    var img = canvas.toDataURL('image/png');
-    $.ajax('/capture', {
-      method: 'POST',
-      data: {
-        'frame': frame / 4,
-        'data': img
-      },
-      error: function() {
-        // If the server is unavailable, stop the capture process.
-        CAPTURE = false;
-      }
-    });
-  }
-
+  var fps_ratio = FPS / 15;
   var t = 0;
   var ax = ['x', 'y', 'z'];
   camera.position[ax[2]] = camera_space;
@@ -108,25 +91,17 @@ function make3D() {
     }
 
     renderer.render(scene, camera);
-    if (CAPTURE && frame % 4 == 0 && frame < secs_to_capture * 60) {
-      captureFrame();
+    if (captureFrame &&
+        (frame % fps_ratio == 0) &&
+        (frame < secs_to_capture * FPS)) {
+      captureFrame(frame, fps_ratio);
     }
     frame++;
   }
   render();
 };
 
-var CAPTURE = window.location.href.indexOf('capture') != -1;
-if (CAPTURE) {
-  // Load jquery, we only need it for AJAX requests for capturing PNGs.
-  var tag = document.createElement('script');
-  tag.src = "https://code.jquery.com/jquery-2.1.4.min.js";
-  tag.async = "true";
-  var firstScriptTag = document.getElementsByTagName('script')[0];
-  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  player.pause();
-  window.setTimeout(make3D, 3000);  //Wait 3 seconds for jquery to load. Lame.
-} else {
-  make3D();
+if (!captureFrame) {
+  makeAnimation();
 }
 </script>
