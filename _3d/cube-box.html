@@ -6,7 +6,7 @@ image: /img/cube-box
 ---
 <script type="text/javascript">
 function make3D() {
-  var FPS = 30;
+  var FPS = 60;
   var secs_to_capture = 3;
   var scene = new THREE.Scene();
   var camera = new THREE.PerspectiveCamera(
@@ -71,7 +71,7 @@ function make3D() {
     $.ajax('/capture', {
       method: 'POST',
       data: {
-        'frame': frame,
+        'frame': frame / 4,
         'data': img
       },
       error: function() {
@@ -108,7 +108,7 @@ function make3D() {
     }
 
     renderer.render(scene, camera);
-    if (CAPTURE && frame < secs_to_capture * FPS) {
+    if (CAPTURE && frame % 4 == 0 && frame < secs_to_capture * 60) {
       captureFrame();
     }
     frame++;

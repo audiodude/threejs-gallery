@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var qs = require('querystring');
 var fs = require('fs');
+var exec = require('child_process').exec;
 
 // From http://stackoverflow.com/questions/10073699/pad-a-number-with-leading-zeros-in-javascript
 function padDigits(number, digits) {
@@ -35,6 +36,13 @@ app.post('/capture', function(req, resp) {
       resp.end();
     });
   });
+});
+
+app.get('/gif', function(req, resp) {
+	exec('ls', function(err, stdout, stderr) {
+		resp.write(stdout);
+		resp.end();
+	});
 });
 
 var server = app.listen(3000, function () {
