@@ -19,7 +19,7 @@
   <section class="container">
     {% for three_d in site.3d | sort: 'date' %}
       <div class="item">
-        <h3><a href="{{three_d.relative_path}}">{{three_d.title}}</a></h3>
+        <h3><a href="{{three_d.url}}">{{three_d.title}}</a></h3>
         {% if three_d.show_date %}
           <span class="date">{{three_d.date | date: '%B %d, %Y'}}</span>
         {% endif %}
@@ -31,7 +31,7 @@
   <section class="container">
     {% for two_d in site.2d | sort: 'date' %}
       <div class="item">
-        <h3><a href="{{two_d.relative_path}}">{{two_d.title}}</a></h3>
+        <h3><a href="{{two_d.url}}">{{two_d.title}}</a></h3>
         {% if two_d.show_date %}
           <span class="date">{{two_d.date | date: '%B %d, %Y'}}</span>
         {% endif %}
