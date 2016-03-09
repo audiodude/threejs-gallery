@@ -1,0 +1,76 @@
+---
+title: Branches
+music: /audio/branches
+---
+<script type="application/processing">
+  int unit = 30;
+
+  class Branch {
+
+	float x, y;
+	float theta;
+	Branch left;
+	Branch right;
+	int depth;
+	boolean done;
+	int i = 1;
+
+	public Branch(float x, float y, float theta, int depth) {
+	    this.x = x; this.y = y; this.theta = theta; this.depth = depth;
+	}
+
+	public void display() {
+	    line(this.x, this.y, this.x+i*2*cos(this.theta), this.y+i*2*sin(this.theta));
+	}
+
+	public ArrayList<Branch> evolve() {
+	    this.i ++;
+	    if (random(150) < Math.pow(3, (depth-2))) {
+		return this.split();
+	    } else {
+		return null;
+	    }
+	}
+
+	public ArrayList<Branch> split() {
+	    ArrayList<Branch> b = new ArrayList<Branch>();
+	    b.add(new Branch(this.x+i*2*cos(this.theta), this.y+i*2*sin(this.theta), theta + (PI/16 + random(PI/8)), this.depth-1));
+	    b.add(new Branch(this.x+i*2*cos(this.theta), this.y+i*2*sin(this.theta), theta - (PI/16 + random(PI/8)), this.depth-1));
+	    return b;
+	}
+    }
+
+    int n = 0;
+    ArrayList<Branch> branches = null;
+    void reset() {
+	branches = new ArrayList<Branch>();
+	branches.add(new Branch(width/2, 0, PI/2, 4));
+	branches.add(new Branch(width/4, height, 3*PI/2, 4));
+	branches.add(new Branch(3*width/4, height, 3*PI/2, 4));
+	n = 0;
+    }
+
+    void setup() {
+	frameRate(30);
+	size(unit*30, unit*20);
+	background(255);
+	reset();
+    }
+
+    void draw() {
+	background(255);
+	ArrayList<Branch> toAdd = new ArrayList<Branch>();
+	for(Branch b : branches) {
+	    b.display();
+	    ArrayList<Branch> next = b.evolve();
+	    if(next != null) {
+		toAdd.addAll(next);
+	    }
+	}
+	branches.addAll(toAdd);
+	n++;
+	if(n >= 420) {
+	    reset();
+	}
+    }
+</script>

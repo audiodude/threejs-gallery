@@ -1,0 +1,89 @@
+---
+title: Drip Drop
+---
+<script type="application/processing">
+  int unit = 20;
+
+  class Drop {
+    int x, y, stop_height;
+    int expanding = 0;
+    int done = 0;
+    color c;
+
+    public Drop(int x, int stop_height, color c) {
+      this.x = x;
+      this.y = unit;
+      this.stop_height = stop_height;
+      this.c = c;
+    }
+
+    public void display() {
+      stroke(this.c);
+      strokeWeight(unit);
+      line(this.x, 0, this.x, this.y);
+      if(this.expanding > 0) {
+        int margin = (unit*this.expanding)*2;
+        line(this.x-margin, stop_height, this.x+margin, stop_height);
+      }
+    }
+
+    public void evolve() {
+      if(done != 0){ return; }
+      if(this.expanding == 0) {
+        if(this.y + unit*3/2 >= stop_height) {
+          this.y = stop_height;
+          this.expanding = 1;
+        } else {
+          this.y += unit*8/3;
+        }
+      } else if(this.expanding * unit < width){
+        this.expanding += 1;
+      } else {
+        this.done = 1;
+      }
+    }
+  }
+
+  ArrayList<Drop> drops = new ArrayList();
+  int stop_height;
+  color[] colors = {#6F96B8, #969696, #E59612, #B4965F, #3796F5, #F6962B};
+  color cur_color;
+  void setup () {
+    strokeCap(SQUARE);
+    size(unit*50, unit*30);
+    stop_height = unit*30;
+    color cur_color = colors[int(random(colors.length))];
+    drops.add(new Drop(int(unit + random(width-unit*2)), stop_height, cur_color));
+  }
+
+
+  void draw() {
+    Drop to_add = null;
+    boolean do_clear = false;
+    for(Drop drop : drops) {
+      drop.display();
+      drop.evolve();
+      if(drop.expanding == 1) {
+        stop_height -= unit;
+        color new_color;
+        do {
+          new_color = colors[int(random(colors.length))];        
+        } while(new_color == cur_color);
+        cur_color = new_color;
+        to_add = new Drop(int(unit + random(width-unit*2)), stop_height, cur_color);
+        if(stop_height <= 0) {
+          stop_height = height;
+          do_clear = true;
+        }
+      }
+    }
+    if(do_clear) {
+      for(int i=0; i<10; i++) {
+        drops.remove(0);
+      }
+    }
+    if(to_add != null) {
+      drops.add(to_add);
+    }
+  }
+</script>
