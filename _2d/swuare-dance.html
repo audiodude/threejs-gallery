@@ -1,0 +1,80 @@
+---
+title: Square Dance
+---
+<script type="application/processing">
+class Maze {
+  int x_len = 16;
+  int y_len = 9;
+  int [][] segments = new int[x_len][y_len];
+  color c0 = color(30, 30, 255);
+  color c1 = color(90, 90, 140);
+  color c2 = color(30, 30, 255);
+  color c3 = color(90, 90, 140);
+  
+  public Maze() {
+    for(int i=0; i<segments.length; i++) {
+      for(int j=0; j<segments[i].length; j++) {
+        segments[i][j] = int(random(16));
+      }
+    }
+  }
+  
+  public void display() {
+    float dx = width/x_len;
+    float dy = height/y_len;
+    float x = dx/2;
+    float y = dy/2;
+    
+    for(int i=0; i<segments.length; i++) {
+      for(int j=0; j<segments[i].length; j++) {
+        boolean top = (random(100) > 30);
+        boolean right = (random(100) > 30);
+        boolean bottom = (random(100) > 30);
+        boolean left = (random(100) > 30);
+        
+        if(top) {
+          stroke(c0);
+          line(x-dx/6, y-dy/2, x-dx/6, y-dy/6);
+          line(x+dx/6, y-dy/2, x+dx/6, y-dy/6);
+          stroke(0);
+        }
+        if(right) {
+          stroke(c1);
+          line(x+dx/2, y-dy/6, x+dx/6, y-dy/6);
+          line(x+dx/2, y+dy/6, x+dx/6, y+dy/6);
+          stroke(0);
+        }
+        if(bottom) {
+          stroke(c2);
+          line(x-dx/6, y+dy/2, x-dx/6, y+dy/6);
+          line(x+dx/6, y+dy/2, x+dx/6, y+dy/6);
+          stroke(0);
+        }
+        if(left) {
+          stroke(c3);
+          line(x-dx/2, y-dy/6, x-dx/6, y-dy/6);
+          line(x-dx/2, y+dy/6, x-dx/6, y+dy/6);
+          stroke(0);
+        }
+        
+        y += dy;
+      }
+      y = dy/2;
+      x += dx;
+    }
+  }
+}
+
+Maze m = new Maze();
+void setup() {
+  size(1200, 675);
+  strokeWeight(2);
+  smooth();
+  frameRate(10);
+}
+
+void draw() {
+  background(255);
+  m.display();
+}
+</script>
