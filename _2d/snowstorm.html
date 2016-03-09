@@ -1,0 +1,71 @@
+---
+title: Snowstorm
+---
+<script type="application/processing">
+class Grid {
+  int w = width;
+  int h = height;
+  int seg_x = int(random(4, 14));
+  int seg_y = int(random(4, 14));
+  float x_len;
+  float y_len;
+  int c=0; //c for counter
+  int THETA_OFF = int(random(20,50)+30);
+  int tone = int(random(255));
+ 
+ public Grid() {
+   x_len = width/seg_x;
+   y_len = height/seg_y;
+ }
+
+ public void display() {
+   float x_cur_len = x_len*sin(radians(c));
+   float y_cur_len = y_len*cos(radians(c));
+   
+   tone = tone + int(40*sin(radians(c)));
+   if(tone > 255) {
+     tone = 255 - tone;
+   } else if(tone < 0) {
+     tone = 0 - tone; 
+   }
+   
+   for(float i=0; i < width+x_len; i += x_len) {
+     for(float j=0; j < height+y_len; j += y_len) {
+         stroke(tone);
+         translate(i, j);
+         rotate(radians(c+THETA_OFF));
+         line(-1*x_cur_len, 0, x_cur_len, 0);
+         line(0, -1*y_cur_len, 0, y_cur_len);
+         rotate(radians(360 - THETA_OFF - c));
+         translate(-1*i, -1*j);
+     }
+   }
+   
+   c+= 1;
+   if(c > 180) {
+     c = 0;
+   }
+ } 
+}
+
+Grid[] grids = new Grid[2];
+
+void setup() {
+  size(1200, 675);
+  frameRate(30);
+  smooth();
+  stroke(0);
+  strokeWeight(8);
+  
+  for(int i=0; i<grids.length; i++) {
+    grids[i] = new Grid(); 
+  }
+}
+
+void draw() {
+  background(255);
+  for(int i=0; i<grids.length; i++) {
+    grids[i].display();
+  }
+}
+</script>
