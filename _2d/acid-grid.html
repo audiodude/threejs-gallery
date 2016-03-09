@@ -1,0 +1,122 @@
+---
+title: Acid Grid
+---
+<script type="application/processing">
+    int unit = 20;
+
+    class Point {
+	int x, y;
+	public Point(int x, int y) { this.x = x; this.y = y; }
+
+	public boolean equals(Object o) {
+	    Point other = (Point) o;
+	    return this.x == other.x && this.y == other.y;
+	}
+
+	public int hashCode() {
+	    return this.x + this.y;
+	}
+    }
+
+    class Cross {
+	int origin_x, origin_y;
+	int n;
+
+	public Cross(int x, int y) {
+	    this.origin_x = x;
+	    this.origin_y = y;
+	}
+
+	public void display() {
+	    line(origin_x - n, origin_y, origin_x + n, origin_y);
+	    line(origin_x, origin_y - n, origin_x, origin_y + n);
+	}
+
+	public void evolve() {
+	    if(origin_x - n > 0 || origin_x + n < width ||
+	       origin_y - n > 0 || origin_y + n < height) {
+		n += unit/4;
+	    }
+	}
+
+	public ArrayList<Point> intersect(Cross other) {
+	    ArrayList<Point> ans = new ArrayList<Point>();
+	    if(this.origin_x - this.n < other.origin_x &&
+	       this.origin_x + this.n > other.origin_x &&
+	       other.origin_y - other.n < this.origin_y &&
+	       other.origin_y + other.n > this.origin_y
+	    ) {
+		ans.add(new Point(other.origin_x, this.origin_y));
+	    }
+	    if (other.origin_x - other.n < this.origin_x &&
+		other.origin_x + other.n > this.origin_x &&
+		this.origin_y - this.n < other.origin_y &&
+		this.origin_y + this.n > other.origin_y
+	    ) {
+		ans.add(new Point(this.origin_x, other.origin_y));
+	    }
+	    return ans;
+	}
+    }
+
+    class Balloon {
+	int x, y;
+	float n = random(10);
+	color c;
+
+	public Balloon(int x, int y) {
+	    this.x = x; this.y = y;
+	    this.c = color(random(50)+15, random(70)+60, random(50)+15);
+	}
+
+	public void display() {
+	    float size = unit*5/4*(1+sin(n)/2);
+	    fill(this.c);
+	    arc(x, y, size, size, 0, 2*PI);
+	}
+
+	public void evolve() {
+	    n += 0.1;
+	}
+    }
+
+
+    ArrayList<Cross> crosses = new ArrayList<Cross>();
+    HashMap<Point, Balloon> balloon_map = new HashMap<Point, Balloon>();
+    void setup() {
+	strokeCap(SQUARE);
+	strokeWeight(unit/5);
+	size(unit*50, unit*30);
+	crosses.add(new Cross(width/2, height/2));
+	crosses.add(new Cross(width/4, height*3/4));
+    }
+
+    void draw() {
+	background(#F5ECC8);
+	stroke(100);
+	for(int i=0; i<crosses.size(); i++) {
+	    Cross cross = crosses.get(i);
+	    cross.display();
+	    cross.evolve();
+	    for(int j=i+1; j<crosses.size(); j++) {
+		Cross other = crosses.get(j);
+		ArrayList<Point> points = cross.intersect(other);
+		for(Point inter : points) {
+		    if(! balloon_map.containsKey(inter)) {
+			balloon_map.put(inter, new Balloon(inter.x, inter.y));
+		    }
+		}
+	    }
+	}
+
+	stroke(0);
+	for(Balloon b : balloon_map.values()) {
+	    b.display();
+	    b.evolve();
+	}
+
+	if(random(100) < 3) {
+	    crosses.add(new Cross(unit + (int)random(width-2*unit), unit + (int)random(height-2*unit)));
+	}
+    }
+  </script>
