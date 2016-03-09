@@ -1,0 +1,47 @@
+---
+title: Cloud Spin
+---
+<script type="application/processing">
+void setup() {
+  size(800, 600);
+  smooth();
+  ellipseMode(CENTER);
+}
+
+int a = 0;
+int b = 0;
+int c = 0;
+void draw() {
+  background(169, 200, 219);
+  translate(width/2, height/2);
+  rotate(radians(c));
+ 
+  int strokeShade = 0;
+  for(float i=0; i<width/2; i += width/20) {
+    fill(int(i)*2*255/width);
+    stroke(int(i)*2*255/width);
+    ellipse(i, 0, width/30, width/30);
+    ellipse(-1*i, 0, width/30, width/30);
+    strokeWeight(10);
+    noFill();
+    arc(0, 0, i*2, i*2, 0+radians(a), PI/2+radians(a));
+    arc(0, 0, i*2+width/30, i*2+width/30, 0-radians(a), PI/2-radians(a));
+    arc(0, 0, i*2+width/15, i*2+width/15, 0-radians(b), PI/2-radians(b));
+  }
+ 
+  c++;
+  if(c >= 360) {
+    c = 0;
+  }
+  
+  a += 2;
+  if(a >= 360) {
+    a = 0;
+  }
+  
+  b += 3;
+  if(b >= 360) {
+    b = 0;
+  }
+}
+</script>

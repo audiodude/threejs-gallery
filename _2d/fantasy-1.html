@@ -1,0 +1,63 @@
+---
+title: Fantasy 1
+---
+<script type="application/processing">
+class Blob {
+  int x, y;
+  int len;
+  boolean is_horiz;
+  float[] delta = new float[2];
+  color c;
+  
+  public Blob(int x1, int y1, int len1, boolean is_horiz1) {
+    x = x1; y = y1; len = len1; is_horiz = is_horiz1;
+    delta[0] = 1 + random(1);
+    delta[1] = 1 + random(1);
+    c = color(random(255), random(255), random(255));
+  }
+  
+  public void display() {
+    stroke(c);
+    if(is_horiz) {
+      line(x, y, x+len, y);
+    } else {
+      line(x, y, x, y+len);
+    }
+    x = int(x*delta[0]);
+    if(x <= 10 || x >= 640) {
+      x = 320;
+      delta[0] = 1/delta[0]; 
+    }
+    y = int(y*delta[1]);
+    if(y <= 10 || y >= 480) {
+      y = 240;
+      delta[1] = 1/delta[1]; 
+    }
+  }
+}
+
+
+Blob[] blobs = new Blob[10];
+float b = 0;
+
+void setup() {
+  size(640, 480);
+  frameRate(14);
+  background(255);
+  smooth();
+  stroke(0);
+  strokeWeight(14);
+  for(int i=0; i<blobs.length; i++) {
+    blobs[i] = new Blob(i*40+30, i*35, 200, (random(1) > 0.5));
+  }
+}
+
+
+void draw() {
+  background(128*(sin(b) + 1));
+  b += 0.1;
+  for(int i=0; i<blobs.length; i++) {
+    blobs[i].display();
+  }
+}
+</script>
