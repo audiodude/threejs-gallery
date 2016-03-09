@@ -1,0 +1,81 @@
+---
+title: Shades
+---
+<script type="text/processing">
+int unit = 25;
+
+class Shade {
+  int top, tall, left, right;
+  boolean flipped;
+  color c;
+  
+  public Shade(int top, int tall, color c) {
+    this(top, tall, c, false);
+  }
+  
+  public Shade(int top, int tall, color c, boolean flipped) {
+    this.top = top; this.tall = tall; this.c = c;
+    this.flipped = flipped;
+    left = 0; right = width;
+  }
+  
+  public void display() {
+    if(right - left > 0) {
+      fill(this.c);
+      noStroke();
+      rect(left, top, right - left, tall);      
+    }
+  }
+  
+  public void evolve() {
+    if(this.flipped) {
+      this.right -= unit/3;
+    } else{
+      this.left += unit/3;
+    }
+  }
+  
+}
+
+color[] colors = {#9966FF, #6600CC};
+ArrayList<Shade> makeShades() {
+  
+  
+  ArrayList<Shade> shades = new ArrayList();  
+  for(int i=0; i<height; i += unit*40/18) {
+    int offset1 = int(random(unit*2));
+    int offset2 = int(random(unit*2));
+    shades.add(new Shade(i+offset1, unit*40/18, colors[int(random(colors.length))]));
+    shades.add(new Shade(i+offset2, unit*40/18, colors[int(random(colors.length))], true));
+    i += max(offset1, offset2);
+  }
+  return shades;
+}
+
+ArrayList<ArrayList<Shade>> layers = new ArrayList();
+void setup() {
+  size(unit*40, unit*22.5);
+  smooth();
+  frameRate(30);
+  ArrayList<Shade> shades = makeShades();
+  layers.add(shades);
+  layers.add(shades);
+  layers.add(shades);
+}
+
+int n=0;
+void draw() {
+  background(#6666CC);
+  for(ArrayList<Shade> shades : layers) {
+    for(Shade shade : shades) {
+      shade.display();
+      shade.evolve();
+    }
+  }
+  if(n % 60 == 0) {
+    layers.add(0, makeShades());
+    layers.remove(layers.size()-1);
+  }
+  n++;
+}
+</script>
