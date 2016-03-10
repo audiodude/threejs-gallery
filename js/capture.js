@@ -9,7 +9,6 @@ if (CAPTURE) {
   tag.src = "https://code.jquery.com/jquery-2.1.4.min.js";
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-  player.pause();
   // Wait 3 seconds for jquery to load. Lame.
   window.setTimeout(function() {
     makeAnimation();

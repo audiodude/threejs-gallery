@@ -120,10 +120,19 @@ title: City
       for(float y=height/30; y<height; y+=height/15) {
         spots.add(new Spot(random(width), y-2, true));
       }
+      if (captureFrame) {
+        noLoop();
+      }
     }
 
+    window.makeAnimation = function() {
+      draw()
+    };
 
-    void draw() {
+    int frame = 0;
+    int FPS = 30;
+    int fps_ratio = FPS / 15;
+    void draw() {      
       for(Slab slab : slabs) {
         slab.display();
         slab.evolve();
@@ -135,5 +144,12 @@ title: City
         spot.display();
         spot.evolve();
       }
+      if ($ && captureFrame &&
+          (frame % fps_ratio == 0) &&
+          (frame < secs_to_capture * FPS)) {
+        captureFrame(frame, fps_ratio);
+        loop();
+      }
+      frame++;
     }
   </script>
