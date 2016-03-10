@@ -1,6 +1,6 @@
 var secs_to_capture = 3;
 var makeAnimation = null;
-
+var $ = null;
 var captureFrame = null;
 var CAPTURE = window.location.href.indexOf('capture') != -1;
 if (CAPTURE) {
