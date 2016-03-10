@@ -84,39 +84,60 @@ title: Acid Grid
     ArrayList<Cross> crosses = new ArrayList<Cross>();
     HashMap<Point, Balloon> balloon_map = new HashMap<Point, Balloon>();
     void setup() {
-	strokeCap(SQUARE);
-	strokeWeight(unit/5);
-	size(unit*50, unit*30);
-	crosses.add(new Cross(width/2, height/2));
-	crosses.add(new Cross(width/4, height*3/4));
+	    strokeCap(SQUARE);
+	    strokeWeight(unit/5);
+	    size(unit*50, unit*30);
+	    crosses.add(new Cross(width/2, height/2));
+	    crosses.add(new Cross(width/4, height*3/4));
+
+      if (captureFrame) {
+        noLoop();
+      }
     }
 
+    window.makeAnimation = function() {
+      draw()
+    };
+
+    int frame = -1;
+    int FPS = 30;
+    int fps_ratio = FPS / 15;
     void draw() {
-	background(#F5ECC8);
-	stroke(100);
-	for(int i=0; i<crosses.size(); i++) {
-	    Cross cross = crosses.get(i);
-	    cross.display();
-	    cross.evolve();
-	    for(int j=i+1; j<crosses.size(); j++) {
-		Cross other = crosses.get(j);
-		ArrayList<Point> points = cross.intersect(other);
-		for(Point inter : points) {
-		    if(! balloon_map.containsKey(inter)) {
-			balloon_map.put(inter, new Balloon(inter.x, inter.y));
-		    }
-		}
+	    background(#F5ECC8);
+	    stroke(100);
+	    for(int i=0; i<crosses.size(); i++) {
+	      Cross cross = crosses.get(i);
+	      cross.display();
+	      cross.evolve();
+	      for(int j=i+1; j<crosses.size(); j++) {
+		      Cross other = crosses.get(j);
+		      ArrayList<Point> points = cross.intersect(other);
+		      for(Point inter : points) {
+		        if(! balloon_map.containsKey(inter)) {
+			        balloon_map.put(inter, new Balloon(inter.x, inter.y));
+		        }
+		      }
+	      }
 	    }
-	}
 
-	stroke(0);
-	for(Balloon b : balloon_map.values()) {
-	    b.display();
-	    b.evolve();
-	}
+	    stroke(0);
+	    for(Balloon b : balloon_map.values()) {
+	      b.display();
+	      b.evolve();
+	    }
+      
+	    if(random(100) < 3) {
+	      crosses.add(
+          new Cross(unit + (int)random(width-2*unit),
+                    unit + (int)random(height-2*unit)));
+	    }
 
-	if(random(100) < 3) {
-	    crosses.add(new Cross(unit + (int)random(width-2*unit), unit + (int)random(height-2*unit)));
-	}
+      if ($ && captureFrame &&
+          (frame % fps_ratio == 0) &&
+          (frame < secs_to_capture * FPS)) {
+        captureFrame(frame, fps_ratio);
+        loop();
+      }
+      frame++;
     }
   </script>
