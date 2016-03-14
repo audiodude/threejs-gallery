@@ -1,0 +1,122 @@
+---
+title: Crazy Shuffle
+date: 2016-03-13
+---
+<script type="text/javascript">
+function makeAnimation() {
+  var FPS = 30;
+  var scene = new THREE.Scene();
+  var camera = new THREE.PerspectiveCamera(
+    75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+  var renderer = new THREE.WebGLRenderer();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0xaaaaaaa);
+  document.body.appendChild(renderer.domElement);
+
+  var ORIGIN = new THREE.Vector3(0, 0, 0);
+
+  var camera_space = 25;
+  camera.position.copy(new THREE.Vector3(
+    camera_space, camera_space, camera_space));
+  camera.lookAt(ORIGIN);
+
+  var colors = [
+    0x636BC8,
+    0xFF6A6A,
+    0x05116D,
+    0xE50000,
+    0x1A29A1,
+    0xFFFFFF,
+    0xB2B4BC,
+    0xFE5353,
+    0x6971B3,
+    0x910000,
+    0x000739,
+    0x350000
+  ];
+
+  var curve = new THREE.EllipseCurve(
+	  0,  0,            // ax, aY
+	  25, 25,           // xRadius, yRadius
+	  0,  2 * Math.PI,  // aStartAngle, aEndAngle
+	  false,            // aClockwise
+	  0                 // aRotation 
+  );
+
+  var alt_curve = new THREE.EllipseCurve(
+	  0,  0,            // ax, aY
+	  25, 25,           // xRadius, yRadius
+	  7 * Math.PI / 6, Math.PI / 6, // aStartAngle, aEndAngle
+	  true,            // aClockwise
+	  Math.PI / 6      // aRotation 
+  );
+  
+  var boxes = []
+  var frame = 0;
+  var fps_ratio = FPS / 15;
+  var t = 0;
+  function render() {
+    setTimeout(function() {
+      requestAnimationFrame( render );
+    }, 1000 / FPS);
+
+    var color = colors[Math.floor(Math.random()*colors.length)];
+    var material = new THREE.MeshBasicMaterial( { color : color } );
+    var alt_color = colors[Math.floor(Math.random()*colors.length)];
+    var alt_material = new THREE.MeshBasicMaterial( { color : alt_color } );
+    var geometry = new THREE.BoxGeometry(5, 0.5, 5);
+
+    var box = new THREE.Mesh(geometry, material);
+    var alt_box = new THREE.Mesh(geometry, alt_material);
+
+    var vec = curve.getPoint(t);
+    box.position.copy(new THREE.Vector3(vec.x, vec.y, 0));
+    box.rotateZ(t * 6.28);
+
+    var alt_vec = alt_curve.getPoint(t);
+    alt_box.position.copy(new THREE.Vector3(alt_vec.x, alt_vec.y, 0));
+    alt_box.rotateZ(t * Math.PI * 2 + Math.PI / 6);
+
+    scene.add(box);
+    scene.add(alt_box);
+    boxes.push(box);
+    boxes.push(alt_box);
+
+    if (frame > 3) {
+      var to_del = boxes.shift();
+      scene.remove(to_del);
+      to_del = boxes.shift();
+      scene.remove(to_del);
+    }
+
+    t += 0.1;
+    if (t == 1) {
+      t = 0.1;
+    }
+
+    // Rotate the camera
+    camera.position['z'] = camera_space * Math.sin(t);
+    camera.lookAt(ORIGIN);
+
+    // t += 0.01;
+    // if (t > 6.28) {
+    //   ax.splice(0, 0, ax.pop());
+    //   t = 0;
+    // }
+
+    renderer.render(scene, camera);
+    if (captureFrame &&
+        (frame % fps_ratio == 0) &&
+        (frame < secs_to_capture * FPS)) {
+      captureFrame(frame, fps_ratio);
+    }
+    frame++;
+  }
+  render();
+};
+
+if (!captureFrame) {
+  makeAnimation();
+}
+</script>
