@@ -1,0 +1,101 @@
+---
+title: Elemental
+p5: true
+---
+<script>
+  var SPACING_X = 10;
+  var SPACING_Y = 10;
+  var NUM_IN_ROW;
+  var NUM_COLS;
+
+  var Round = function(x, y, size) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+  };
+
+  Round.prototype.draw = function() {
+    ellipse(this.x, this.y, this.size, this.size);
+  };
+
+  Round.prototype.nudge = function() {
+    this.x += Math.floor((Math.random() * 2)) - Math.floor((Math.random() * 2));
+    this.y += Math.floor((Math.random() * 2)) - Math.floor((Math.random() * 2));
+  }
+
+  var Nexus = function(x, y) {
+    this.x = x;
+    this.y = y;
+    this.rounds = [];
+  };
+
+  Nexus.prototype.addRound = function(round) {
+    this.rounds.push(round);
+  };
+
+  Nexus.prototype.draw = function() {
+    for (var i=0; i<this.rounds.length; i++) {
+      line(this.x, this.y, this.rounds[i].x, this.rounds[i].y);
+    }
+  }
+
+  function connect_nexuses(nexuses, rounds) {
+    for (var i=0; i<NUM_IN_ROW * NUM_COLS; i++) {
+      var adder;
+      if (i % 14 > 6) {
+        adder = -1;
+      } else {
+        adder = 0;
+      }
+      if ((i + 7) % 14 != 0) {
+        nexuses[i].addRound(rounds[i + adder]);
+      }
+      if ((i - 6) % 14 != 0) {
+        nexuses[i].addRound(rounds[i + 1 + adder]);
+        }
+      if (i - NUM_IN_ROW >= 0) {
+        nexuses[i].addRound(rounds[i - NUM_IN_ROW])
+      }
+      if (i + NUM_IN_ROW < NUM_IN_ROW * NUM_COLS) {
+          nexuses[i].addRound(rounds[i + NUM_IN_ROW])
+      }
+    }
+  }
+
+  var rounds = [];
+  var nexuses = [];
+  function setup() {
+    var myCanvas = createCanvas(1280, 720);
+    myCanvas.parent('container');
+
+    NUM_IN_ROW = Math.floor(width / (80 + SPACING_X) / 2);
+    NUM_COLS = Math.floor(height / (80 + SPACING_Y));
+
+    hidden = false;
+    for (var j=0; j+80<height; ) {
+      for (var i=0; i+80<width; ) {
+        if (!hidden) {
+          rounds.push(new Round(i+55, j+45, 80));
+        } else {
+          nexuses.push(new Nexus(i+55, j+45));
+        }
+        hidden = !hidden;
+        i += 80 + SPACING_X;
+      }
+      hidden = !hidden;
+      j += 80 + SPACING_Y
+    }
+    connect_nexuses(nexuses, rounds);
+  }
+
+  function draw() {
+    background(255, 255, 255);
+    for(var i=0; i<rounds.length; i++) {
+      rounds[i].draw();
+      rounds[i].nudge();
+    }
+    for(var i=0; i<nexuses.length; i++) {
+      nexuses[i].draw();
+    }
+  }
+</script>
