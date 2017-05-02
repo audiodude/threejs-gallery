@@ -1,6 +1,9 @@
 ---
 title: Elemental
+date: 2017-05-01
 p5: true
+music: /audio/elemental
+image: /img/elemental
 ---
 <script>
   var SPACING_X = 10;
@@ -8,19 +11,164 @@ p5: true
   var NUM_IN_ROW;
   var NUM_COLS;
 
-  var Round = function(x, y, size) {
-    this.x = x;
-    this.y = y;
+  colors = [
+    '#494d40',
+    '#82a08f',
+    '#ebd3e3',
+    '#c0a2c5',
+    '#774268',
+    '#e581c0',
+  ]
+
+  var n = 0;
+  var start_to_rounds = {};
+  var rounds = [];
+  var big_rounds = [];
+  var nexuses = [];
+  function init() {
+    n = 0;
+    start_to_rounds = {};
+    rounds = [];
+    big_rounds = [];
+    nexuses = [];
+
+    NUM_IN_ROW = Math.floor(width / (80 + SPACING_X) / 2);
+    NUM_COLS = Math.floor(height / (80 + SPACING_Y));
+
+    hidden = false;
+    for (var j=0; j+80<height; ) {
+      for (var i=0; i+80<width; ) {
+        if (!hidden) {
+          rounds.push(new Round(i+55, j+45, 80));
+        } else {
+          nexuses.push(new Nexus(i+55, j+45));
+        }
+        hidden = !hidden;
+        i += 80 + SPACING_X;
+      }
+      hidden = !hidden;
+      j += 80 + SPACING_Y
+    }
+    connect_nexuses(nexuses, rounds);
+  }
+
+  var Round = function(x, y, size, big_factor, fresh) {
+    big_factor = big_factor || 0;
+    this.start_x = this.x = x;
+    this.start_y = this.y = y;
+    start_to_rounds['' + this.x + ':' + this.y] = this;
     this.size = size;
+    this.big = big_factor;
+    this.fresh = fresh || 0;
   };
 
   Round.prototype.draw = function() {
+    if (this.big) {
+      fill(colors[this.big % 6]);
+    }
     ellipse(this.x, this.y, this.size, this.size);
+    if (this.big) {
+      fill('#000');
+    }
   };
 
   Round.prototype.nudge = function() {
-    this.x += Math.floor((Math.random() * 2)) - Math.floor((Math.random() * 2));
-    this.y += Math.floor((Math.random() * 2)) - Math.floor((Math.random() * 2));
+    if (Math.random() > 0.85) {
+      if (Math.random() > 0.5) {      
+        this.x++;
+      } else {
+        this.x--
+      }
+    }
+    if (Math.random() > 0.85) {
+      if (Math.random() > 0.5) {
+        this.y++;
+      } else {
+        this.y--;
+      }
+    }
+    this.fresh = Math.max(this.fresh - 1, 0);
+  }
+
+  Round.prototype.to_check = function() {
+    var r = [];
+    if (this.big > 0) {
+      var big = big_rounds.slice();
+      var idx = big_rounds.indexOf(this);
+      if (idx != -1) {
+        big.splice(idx, 1)
+      }
+      return big.concat(rounds);
+    } else {
+      var minus_x = this.start_x - this.size - SPACING_X;
+      var plus_x = this.start_x + this.size + SPACING_X;
+      var minus_y = this.start_y - this.size - SPACING_Y;
+      var plus_y = this.start_y + this.size + SPACING_Y;
+
+      var a = '' + plus_x + ':' + plus_y;
+      var b = '' + minus_x + ':' + plus_y;
+      var c = '' + plus_x + ':' + minus_y;
+      var d = '' + minus_x + ':' + minus_y;
+      var to_check = [a, b, c, d];
+
+      for (var i=0; i<to_check.length; i++) {
+        var found = start_to_rounds[to_check[i]];
+        if (found) {
+          r.push(found);
+        }
+      }
+    }
+    return r;
+  }
+
+  Round.prototype.collides_with = function(other) {
+    var dx = this.x - other.x;
+    var dy = this.y - other.y;
+    var distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < (this.size + other.size) / 2) {
+      return true;
+    }
+    return false;
+  }
+
+  Round.prototype.collide = function() {
+    var to_check = this.to_check();
+    for (var i=0; i<to_check.length; i++) {
+      if (this.collides_with(to_check[i])) {
+        this.combine_with(to_check[i]);
+      }
+    }
+  }
+
+  Round.prototype.combine_with = function(other) {
+    if (this.fresh || other.fresh) {
+      return;
+    }
+    var new_x = (this.x + other.x)/2;
+    var new_y = (this.y + other.y)/2;
+    var new_size = (this.size + other.size) * .8;
+    var new_big = Math.max(this.big + other.big) + 1;
+
+    // Remove rounds that are being combined
+    var my_idx = rounds.indexOf(this);
+    if (my_idx != -1) {
+      rounds.splice(my_idx, 1);
+    }
+    my_idx = big_rounds.indexOf(this);
+    if (my_idx != -1) {
+      big_rounds.splice(my_idx, 1);
+    }
+    var other_idx = rounds.indexOf(other);
+    if (other_idx != -1) {
+      rounds.splice(other_idx, 1);
+    }
+    other_idx = big_rounds.indexOf(other);
+    if (other_idx != -1) {
+      big_rounds.splice(other_idx, 1);
+    }
+    
+    big_rounds.push(new Round(new_x, new_y, new_size, new_big, 20));
   }
 
   var Nexus = function(x, y) {
@@ -57,45 +205,44 @@ p5: true
         nexuses[i].addRound(rounds[i - NUM_IN_ROW])
       }
       if (i + NUM_IN_ROW < NUM_IN_ROW * NUM_COLS) {
-          nexuses[i].addRound(rounds[i + NUM_IN_ROW])
+        nexuses[i].addRound(rounds[i + NUM_IN_ROW])
       }
     }
   }
 
-  var rounds = [];
-  var nexuses = [];
   function setup() {
     var myCanvas = createCanvas(1280, 720);
     myCanvas.parent('container');
 
-    NUM_IN_ROW = Math.floor(width / (80 + SPACING_X) / 2);
-    NUM_COLS = Math.floor(height / (80 + SPACING_Y));
+    fill('#000');
 
-    hidden = false;
-    for (var j=0; j+80<height; ) {
-      for (var i=0; i+80<width; ) {
-        if (!hidden) {
-          rounds.push(new Round(i+55, j+45, 80));
-        } else {
-          nexuses.push(new Nexus(i+55, j+45));
-        }
-        hidden = !hidden;
-        i += 80 + SPACING_X;
-      }
-      hidden = !hidden;
-      j += 80 + SPACING_Y
-    }
-    connect_nexuses(nexuses, rounds);
+    init();
   }
 
   function draw() {
     background(255, 255, 255);
-    for(var i=0; i<rounds.length; i++) {
-      rounds[i].draw();
-      rounds[i].nudge();
-    }
-    for(var i=0; i<nexuses.length; i++) {
+    for (var i=0; i<nexuses.length; i++) {
       nexuses[i].draw();
+    }
+    for (var i=0; i<rounds.length; i++) {
+      rounds[i].nudge();
+      rounds[i].collide();
+      if (!rounds[i]) {
+        continue;
+      }
+      rounds[i].draw();
+    }
+    for (var i=0; i<big_rounds.length; i++) {
+      big_rounds[i].nudge();
+      big_rounds[i].collide();
+      if (!big_rounds[i]) {
+        continue;
+      }
+      big_rounds[i].draw();
+    }
+    n++
+    if (n > 10000 || rounds.length + big_rounds.length == 1) {
+      init();
     }
   }
 </script>
