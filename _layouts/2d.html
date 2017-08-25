@@ -47,11 +47,15 @@
     <i id="info-icon" class="fa fa-info-circle fa-2x"></i>
     <div id="speaker" class="playing"></div>
   </div>
+  {{page.requires}}
   {% if page.p5 %}
     <script src="/js/p5.min.js"></script>
   {% else %}
     <script src="/js/processing.min.js"></script>
   {% endif %}
   <script src="/js/controls.js"></script>
+  {% for script in page.requires %}
+    <script src="/js/{{script}}.js"></script>
+  {% endfor %}
 </body>
 </html>

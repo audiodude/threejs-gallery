@@ -1,0 +1,38 @@
+---
+title: L System 2
+date: 2017-08-23
+show_date: true
+p5: true
+requires: ['system']
+---
+<script>
+  var S;
+  function setup() {
+    var myCanvas = createCanvas(1280, 720);
+    myCanvas.parent('container');
+    fill('#000');
+    stroke('#000');
+    background(255, 255, 255);
+    frameRate(2);
+
+    S = new System({
+      variables: ['P', 'Q'],
+      constants: ['+', '-', '[', ']'],
+      start: 'P',
+      rules: {
+        'P': 'PP-[Q]-PP', 
+        'Q': '+QQ-'
+      },
+      angle: 60,
+      dist: 6,
+      max_iterations: 10,
+      start_x: 1280,
+      start_y: 0,
+    });
+  }
+
+  function draw() {
+    S.draw();
+    S.iterate();
+  }
+</script>
