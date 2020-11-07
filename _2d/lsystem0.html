@@ -1,0 +1,96 @@
+---
+title: L System 0
+date: 2017-05-17
+show_date: true
+p5: true
+---
+<script>
+  var System = function(
+    variables, constants, start, rules, angle, max_it, width, height) {
+    this.variables = variables;
+    this.constants = constants;
+    this.start = start;
+    this.rules = rules;
+    this.current = this.start;
+    this.angle = angle * Math.PI / 180;
+    this.dist = 20;
+    this.stack = [];
+    this.max_iterations = max_it;
+    this.i = 0;
+  };
+
+  System.prototype.iterate = function() {
+    if (this.i >= this.max_iterations) {
+      return;
+    }
+    var next = '';
+    for (var i = 0; i < this.current.length; i++) {
+      var c = this.current.charAt(i);
+      if (this.constants.includes(c)) {
+        continue;
+      }
+      var rule = this.rules[c];
+      next += rule;
+    }
+    this.current = next;
+  };
+
+  System.prototype.draw = function()  {
+    this.i++;
+    if (this.i >= this.max_iterations) {
+      return;
+    }
+
+    this.state = {x: width/2, y: height/2, a: 0};
+    var translations = {
+      'F': function() {
+        var new_x = this.state.x + Math.cos(this.state.a)*this.dist;
+        var new_y = this.state.y + Math.sin(this.state.a)*this.dist;
+        line(this.state.x, this.state.y, new_x, new_y);
+        this.state.x = new_x;
+        this.state.y = new_y;
+      }.bind(this),
+      '+': function() {
+        this.state.a += this.angle;
+      }.bind(this),
+      '-': function() {
+        this.state.a -= this.angle;
+      }.bind(this),
+      '[': function() {
+        this.stack.push(this.state)
+      }.bind(this),
+      ']': function() {
+        this.state = this.stack.pop();
+      }.bind(this)
+    }
+    translations['G'] = translations['F'];
+    
+    var commands = this.current.split('');
+    for (var i=0; i<commands.length; i++) {
+      var func = translations[commands[i]];
+      if (func) {
+        func();
+      }
+    }
+  }
+
+  var S;
+  function setup() {
+    var myCanvas = createCanvas(1280, 720);
+    myCanvas.parent('container');
+    fill('#000');
+    stroke('#000');
+    background(255, 255, 255);
+    frameRate(1);
+
+    S = new System(['F', 'G'], ['+', '-', '[', ']'], 'F', {
+      'F': 'F++G[F-]G-', 
+      'G': 'F--'
+    }, 60, 10, width, height);
+  }
+
+  function draw() {
+    S.draw();
+    S.iterate();
+  }
+</script>

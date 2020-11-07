@@ -15,9 +15,11 @@
 </head>
 <body>
   <h1>2D and 3D artwork by Travis Briggs</h1>
+  <p class="warning">Epilepsy warning: artwork contains rapidly changing shapes and colors</p>
   <h2>3D</h2>
   <section class="container">
-    {% for three_d in site.3d | sort: 'date' %}
+    {% assign sorted = (site.3d | sort: 'date') | reverse %}
+    {% for three_d in sorted %}
       <div class="item">
         <h3><a href="{{three_d.url}}">{{three_d.title}}</a></h3>
         {% if three_d.show_date %}
@@ -29,7 +31,8 @@
 
   <h2>2D</h2>
   <section class="container">
-    {% for two_d in site.2d | sort: 'date' %}
+    {% assign sorted = (site.2d | sort: 'date') | reverse %}
+    {% for two_d in sorted %}
       <div class="item">
         <h3><a href="{{two_d.url}}">{{two_d.title}}</a></h3>
         {% if two_d.show_date %}

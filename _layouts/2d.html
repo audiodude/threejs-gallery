@@ -19,24 +19,43 @@
   {% include analytics.html %}
 </head>
 <body>
-  <div id="container">
+  {% if page.p5 %}
     {{page.content}}
-    <canvas></canvas>
-  </div>
+    <div id="container"></div>
+  {% else %}
+    <div id="container">
+      {{page.content}}
+      <canvas></canvas>
+    </div>
+  {% endif %}
   {% if page.music %}
     <audio id="player" autoplay loop>
       <source src="{{page.music}}.mp3" type="audio/mp3">
       <source src="{{page.music}}.ogg" type="audio/ogg">
     </audio>
   {% endif %}
+  {% if page.p5 %}
   <div id="info" class="hid">
-    {{page.title}} is a digital creation made by  <a href="http://travisbriggs.com">Travis Briggs</a> entirely in <a href="http://processing.org/">Processing</a>. It appears here courtesy of the excellent <a href="http://processingjs.org/">Processing.js</a> library. If you are interested in the code for this artwork, simply view the source of this page. The source code is availble under the MIT license and can also be found on  <a href="https://github.com/audiodude/threejs-gallery">Github</a>. See more 2D and 3D digital artwork at <a href="http://gallery.travisbriggs.com">gallery.travisbriggs.com</a>.
-   </div>
-   <div id="icons">
-     <i id="info-icon" class="fa fa-info-circle fa-2x"></i>
-     <div id="speaker" class="playing"></div>
-   </div>
-  <script src="/js/processing.min.js"></script>
+    {{page.title}} is a digital creation made by <a href="http://travisbriggs.com">Travis Briggs</a> entirely in the delightful <a href="http://p5js.org/">p5.js</a> library. If you are interested in the code for this artwork, simply view the source of this page. The source code is availble under the MIT license and can also be found on  <a href="https://github.com/audiodude/gallery">Github</a>. See more 2D and 3D digital artwork at <a href="http://gallery.travisbriggs.com">gallery.travisbriggs.com</a>.
+  </div>
+  {% else %}
+  <div id="info" class="hid">
+    {{page.title}} is a digital creation made by <a href="http://travisbriggs.com">Travis Briggs</a> entirely in <a href="http://processing.org/">Processing</a>. It appears here courtesy of the excellent <a href="http://processingjs.org/">Processing.js</a> library. If you are interested in the code for this artwork, simply view the source of this page. The source code is availble under the MIT license and can also be found on  <a href="https://github.com/audiodude/gallery">Github</a>. See more 2D and 3D digital artwork at <a href="http://gallery.travisbriggs.com">gallery.travisbriggs.com</a>.
+  </div>
+  {% endif %}
+  <div id="icons">
+    <i id="info-icon" class="fa fa-info-circle fa-2x"></i>
+    <div id="speaker" class="playing"></div>
+  </div>
+  {{page.requires}}
+  {% if page.p5 %}
+    <script src="/js/p5.min.js"></script>
+  {% else %}
+    <script src="/js/processing.min.js"></script>
+  {% endif %}
   <script src="/js/controls.js"></script>
+  {% for script in page.requires %}
+    <script src="/js/{{script}}.js"></script>
+  {% endfor %}
 </body>
 </html>
